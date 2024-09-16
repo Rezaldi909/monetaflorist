@@ -1,0 +1,74 @@
+Event::create([
+    'nama' => 'Christmast Edition',
+    'slug' => 'christmast-edition',
+]);
+
+Event::create([
+    'nama' => 'Chinese New year',
+    'slug' => 'chinese-new-year',
+]);
+
+Event::create([
+    'nama' => 'New Born Baby',
+    'slug' => 'new-born-baby',
+]);
+
+Product::create([
+    'event_id' => '1',
+    'nama' => 'Lily',
+    'slug' => 'lily',
+    'harga' => '200.000',
+    'foto' => 'lily.jpg',
+]);
+
+Product::create([
+    'event_id' => '2',
+    'nama' => 'Rose',
+    'slug' => 'rose',
+    'harga' => '200.000',
+    'foto' => 'rose.jpg',
+]);
+
+
+<?php
+
+namespace App\Http\Controllers;
+
+use App\Models\ProductType;
+use App\Http\Requests;
+
+class ProductTypeController extends Controller
+{
+    public function show(ProductType $type)
+    {
+        return view('products', [
+            'title' => $type->nama,
+            'products' => $type->products, // Pastikan relasi 'products' ada di model FlowerType
+            'type' => $type->nama,
+        ]);
+    }
+}
+
+
+
+
+<?php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+
+class ProductType extends Model
+{
+    use HasFactory;
+
+    protected $guarded = ['id'];
+
+    public function products()
+    {
+        return $this->hasMany(Product::class);
+    }
+}
+
+
