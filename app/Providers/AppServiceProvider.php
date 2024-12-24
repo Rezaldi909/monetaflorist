@@ -31,8 +31,8 @@ class AppServiceProvider extends ServiceProvider
     {
         Paginator::useBootstrap();
 
-        View::share('events', EventType::all());
         View::share('flowers', FlowerType::all());
         View::share('types', ProductType::all());
+        View::share('events', EventType::all());
     }
 }

@@ -16,7 +16,7 @@
     <table class="table table-striped table-sm">
       <thead>
         <tr>
-          <th scope="col">#</th>
+          <th scope="col">No</th>
           <th scope="col">Foto</th>
           <th scope="col">Nama</th>
           <th scope="col">Harga</th>
@@ -41,7 +41,7 @@
           <td>{{ $product->productType->nama }}</td>
           <td>{{ $product->event->nama }}</td>
           <td>
-            <a href="/dashboard/products/{{ $product->slug }}" class="badge bg-info"><span data-feather="eye"></span></a>
+            {{-- <a href="/dashboard/products/{{ $product->slug }}" class="badge bg-info"><span data-feather="eye"></span></a> --}}
             <a href="/dashboard/products/{{ $product->slug }}/edit" class="badge bg-warning"><span data-feather="edit"></span></a>
             <form action="/dashboard/products/{{ $product->slug }}" method="post" class="d-inline">
               @method('delete')

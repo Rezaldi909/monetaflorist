@@ -15,7 +15,7 @@ class ProductController extends Controller
             $products->where('nama', 'like', '%' . request('search') . '%');
         }
 
-        return view('products', [
+        return view('products.index', [
             "title" => "All Products",
             "products" => $products->paginate(20)->withQueryString()
         ]);
@@ -25,8 +25,11 @@ class ProductController extends Controller
 
     public function show(Product $product)
     {
-        return view('detail', [
+        $products = Product::latest();
+
+        return view('products.show', [
             "title" => "Detail",
+            "products" => $products->take(4)->get(),
             "product" => $product->load('event')
         ]);
     }

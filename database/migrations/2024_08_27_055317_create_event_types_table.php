@@ -14,7 +14,7 @@ class CreateEventTypesTable extends Migration
     public function up()
     {
         Schema::create('event_types', function (Blueprint $table) {
-            $table->id();
+            $table->id()->constrained()->onDelete('cascade');
             $table->string('nama')->unique();
             $table->string('slug')->unique();
             $table->timestamps();

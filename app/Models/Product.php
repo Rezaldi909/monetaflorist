@@ -19,12 +19,13 @@ class Product extends Model
 
     public function flowerType()
     {
-        return $this->belongsTo(FlowerType::class);
+        return $this->belongsTo(FlowerType::class, 'flower_type_id');
     }
+
 
     public function productType()
     {
-        return $this->belongsTo(ProductType::class);
+        return $this->belongsTo(ProductType::class, 'product_type_id');
     }
 
     public function user()

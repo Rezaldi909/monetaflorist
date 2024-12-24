@@ -12,6 +12,49 @@
             <span data-feather="file-text"></span>
             Products
           </a>
+        </li>
+        <li class="nav-item active">
+          <a class="nav-link {{ Request::is('dashboard/contacts*') ? 'active' : '' }}" href="/dashboard/contacts">
+            <span data-feather="file-text"></span>
+            Contacts
+          </a>
+        <li class="nav-item active">
+          <a class="nav-link {{ Request::is('dashboard/custom-order*') ? 'active' : '' }}" href="/dashboard/custom-order">
+            <span data-feather="file-text"></span>
+            Custom Order
+          </a>
+        </li>   
+        <li class="nav-item active">
+          <a class="nav-link {{ Request::is('dashboard/checkouts*') ? 'active' : '' }}" href="/dashboard/checkouts">
+            <span data-feather="file-text"></span>
+            Checkout
+          </a>
+        </li>   
       </ul>
+
+    <h6 class="sidebar-heading d-flex justify-content-beetwen align-items-center px-3 mt-4 mb-1 text-muted">
+      <span>Administrator</span>
+    </h6>
+    <ul class="nav flex-coloumn">
+      <li class="nav-item">
+        <a class="nav-link {{ Request::is('dashboard/collections/flower*') ? 'active' : '' }}" href="/dashboard/collections/flower">
+          <span data-feather="grid"></span>
+          FlowerType 
+        </a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link {{ Request::is('dashboard/collections/new*') ? 'active' : '' }}" href="/dashboard/collections/new">
+          <span data-feather="grid"></span>
+          ProductType
+        </a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link {{ Request::is('dashboard/collections/event*') ? 'active' : '' }}" href="/dashboard/collections/event">
+          <span data-feather="grid"></span>
+          EventType
+        </a>
+      </li>
+    </ul>
+
     </div>
   </nav>

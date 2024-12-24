@@ -9,9 +9,9 @@ class ProductTypeController extends Controller
 {
     public function show(ProductType $type)
     {
-        return view('products', [
+        return view('products.index', [
             'title' => $type->nama,
-            'products' => $type->products()->paginate(10)->withQueryString(), // Pastikan relasi 'products' ada di model FlowerType
+            'products' => $type->products()->paginate(10)->withQueryString(), 
             'type' => $type->nama,
         ]);
     }
