@@ -85,7 +85,8 @@
         </div>
         
         
-        <button type="submit" class="btn btn-primary">Submit</button>
+        <button type="submit" class="btn btn-primary">Edit Product</button>
+        <a href="{{ route('products.index') }}" class="btn btn-danger">Cancel</a>
       </form>
 </div>
 
@@ -112,7 +113,13 @@
       oFReader.onload = function(oFREvent) {
         imgPreview.src = oFREvent.target.result;
       }
+      
     }
+
+    document.getElementById('harga').addEventListener('input', function(e) {
+        let value = e.target.value.replace(/[^\d]/g, ''); // Remove non-numeric characters (e.g., commas)
+        e.target.value = value; // Update the input value with cleaned number
+    });
 
 </script>
 

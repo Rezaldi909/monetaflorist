@@ -32,8 +32,8 @@
           <td>{{ $custom->phone }}</td>
           <td>{{ $custom->message }}</td>
           <td>
-            {{-- <a href="{{ route('dashboard.custom-orders.edit', $custom->id) }}" class="badge bg-warning"><span data-feather="edit"></span></a> --}}
-            <form action="/dashboard/custom-orders/{{ $custom->id }}" method="post" class="d-inline">
+        <a href="/dashboard/custom-order/{{$custom->id}}/edit" class="badge bg-warning"><span data-feather="edit"></span></a>
+            <form action="/dashboard/custom-order/{{ $custom->id }}" method="post" class="d-inline">
               @method('delete')
               @csrf
               <button class="badge bg-danger border-0" onclick="return confirm('Are you sure?')">

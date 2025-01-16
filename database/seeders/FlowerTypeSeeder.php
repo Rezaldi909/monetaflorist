@@ -16,7 +16,7 @@ class FlowerTypeSeeder extends Seeder
     {
         FlowerType::create([
             'nama' => 'Fresh Flower',
-            'slug' => 'christmast-edition',
+            'slug' => 'fresh-flower',
         ]);
         
         FlowerType::create([

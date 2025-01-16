@@ -8,7 +8,7 @@
     @else
     
 @endif
-<p class="text-center fs-4 mb-5 mt-5">{{ $title }}</p>
+<p class="text-center fs-4 mb-5 mt-5 fw-bold text-new">{{ $title }}</p>
 
 <div class="container col-8 mb-5">
   <form action="{{ route('contact.store') }}" method="POST">
@@ -31,7 +31,7 @@
             <textarea class="form-control" name="message" rows="3" placeholder="Your Message" required></textarea>
         </div>
         <div class="d-grid gap-2">
-            <button class="btn btn-primary" type="submit">Send Message</button>
+            <button class="btn btn-new text-white px-3 py-2" type="submit">SEND MESSAGE</button>
         </div>
     </div>  
   </form>

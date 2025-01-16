@@ -59,7 +59,9 @@ class DashboardCustomOrderController extends Controller
      */
     public function edit(CustomOrder $customOrder)
     {
-        return view('dashboard.custom-order.edit');
+        return view('dashboard.custom-order.edit', [
+            'customOrder' => $customOrder
+        ]);
     }
 
     /**
@@ -71,19 +73,20 @@ class DashboardCustomOrderController extends Controller
      */
     public function update(Request $request, CustomOrder $customOrder)
     {
-            // Validasi inputan
+        // Validasi data
         $validatedData = $request->validate([
-            'name' => 'required|string|max:255',
-            'email' => 'required|email|max:255',
-            'phone' => 'required|string|max:15',
-            'message' => 'nullable|string',
+            'name' => 'required|max:255',
+            'email' => 'required|email',
+            'phone' => 'required',
+            'message' => 'required',
         ]);
 
-        // Update data custom order
+        // Update data contact
         $customOrder->update($validatedData);
 
-        return redirect()->route('custom-orders.index')->with('success', 'Custom order updated successfully!');
-    }
+        // Redirect dengan pesan sukses
+        return redirect()->back()->with('success', 'Custom Order has been updated!');
+}
 
     /**
      * Remove the specified resource from storage.
@@ -94,6 +97,6 @@ class DashboardCustomOrderController extends Controller
     public function destroy(CustomOrder $customOrder)
     {
         CustomOrder::destroy($customOrder->id);
-        return redirect('/dashboard/custom-order')->with('success', 'Custom Order has been deleted!');
+        return redirect('/dashboard/contacts')->with('success', 'New custom order has been deleted!');
     }
 }

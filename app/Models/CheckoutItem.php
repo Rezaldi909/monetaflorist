@@ -13,18 +13,7 @@ class CheckoutItem extends Model
     protected $table = 'checkout_items';
 
     // Kolom yang dapat diisi secara massal
-    protected $fillable = [
-        'checkout_id',
-        'name',
-        'price',
-        'delivery_options',
-        'delivery_time',
-        'sender_name',
-        'sender_phone',
-        'from',
-        'to',
-        'message',
-    ];
+    protected $guarded = ['id'];
 
     /**
      * Relasi dengan model Checkout (many ke 1).

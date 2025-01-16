@@ -5,10 +5,10 @@
         @foreach ($products as $product)
             <div class="col-md-3"> <!-- Ensure it's col-md-3 for 4 products per row -->
                 <div class="card" style="width: 100%;">
-                    <img style="height: 250px" src="{{ asset('storage/' . $product->image) }}" class="card-img-top" alt="...">
+                    <img style="width: 100%; height: 300px; object-fit: contain;" src="{{ asset('storage/' . $product->image) }}" class="card-img-top" alt="{{ $product->nama }}">
                     <div class="card-body">
-                        <h5 class="card-title">{{ $product->nama }}</h5>
-                        <p class="card-text">{{ $product->harga }}</p>
+                        <h5 class="card-title text-new">{{ $product->nama }}</h5>
+                        <p class="card-text">Rp {{ number_format($product->harga, 0, ',', '.') }}</p>
                         <a href="/products/{{ $product->slug }}" class="stretched-link"></a>
                     </div>
                 </div>

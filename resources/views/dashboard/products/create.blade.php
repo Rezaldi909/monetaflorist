@@ -23,14 +23,14 @@
           <input type="text" class="form-control" id="slug" name="slug" readonly hidden>
         </div>
         <div class="mb-3 col-lg-6">
-          <label for="harga" class="form-label">harga</label>
-          <input type="number" class="form-control  @error('harga') is-invalid @enderror" id="harga" name="harga" value="{{ old('harga') }}" required>
+          <label for="harga" class="form-label">Harga</label>
+          <input type="text" class="form-control  @error('harga') is-invalid @enderror" id="harga" name="harga" value="{{ old('harga') }}" required>
           @error('harga')
             <div class="invalid-feedback">
               {{ $message }}
             </div>
           @enderror
-        </div>
+        </div>        
         <div class="mb-3">
           <label for="image" class="form-label">Image</label>
           <img class="img-preview img-fluid mb-3 col-sm-4">
@@ -79,7 +79,8 @@
         </div>
         
         
-        <button type="submit" class="btn btn-primary">Submit</button>
+        <button type="submit" class="btn btn-primary">Add Product</button>
+        <a href="{{ route('products.index') }}" class="btn btn-danger">Cancel</a>
       </form>
 </div>
 
@@ -107,6 +108,13 @@
         imgPreview.src = oFREvent.target.result;
       }
     }
+
+    document.getElementById('harga').addEventListener('input', function(e) {
+    let value = e.target.value.replace(/[^\d]/g, ''); // Remove non-numeric characters (e.g., commas)
+    e.target.value = value; // Update the input value with cleaned number
+});
+
+
     
 
 </script>

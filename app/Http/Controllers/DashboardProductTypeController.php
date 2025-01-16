@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\ProductType;
 use Illuminate\Http\Request;
+use \Cviebrock\EloquentSluggable\Services\SlugService;
 
 class DashboardProductTypeController extends Controller
 {
@@ -26,7 +27,7 @@ class DashboardProductTypeController extends Controller
      */
     public function create()
     {
-        //
+        return view('dashboard.collections.new.create');
     }
 
     /**
@@ -37,7 +38,14 @@ class DashboardProductTypeController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $validatedData = $request->validate([
+            'nama' => 'required|max:255',
+        ]);
+    
+        // The slug will be automatically generated
+        ProductType::create($validatedData);
+    
+        return redirect('/dashboard/collections/new')->with('success', 'New Product Type has been created!');
     }
 
     /**
@@ -57,11 +65,16 @@ class DashboardProductTypeController extends Controller
      * @param  \App\Models\ProductType  $productType
      * @return \Illuminate\Http\Response
      */
-    public function edit(ProductType $productType)
+    public function edit($slug)
     {
-        //
-    }
+        // Find the flower type by its slug
+        $productType = ProductType::where('slug', $slug)->firstOrFail();
 
+        // Return the view with the flower type data
+        return view('dashboard.collections.new.edit', [
+            'productType' => $productType
+        ]);
+    }
     /**
      * Update the specified resource in storage.
      *
@@ -69,9 +82,22 @@ class DashboardProductTypeController extends Controller
      * @param  \App\Models\ProductType  $productType
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, ProductType $productType)
+    public function update(Request $request, $slug)
     {
-        //
+        // Validate the incoming request data
+        $validatedData = $request->validate([
+            'nama' => 'required|max:255',
+            'slug' => 'required|unique:flower_types,slug,' . $slug . ',slug'
+        ]);
+
+        // Find the flower type by its slug
+        $productType = ProductType::where('slug', $slug)->firstOrFail();
+
+        // Update the flower type with the validated data
+        $productType->update($validatedData);
+
+        // Redirect back with a success message
+        return redirect('/dashboard/collections/new')->with('success', 'Product type has been updated!');
     }
 
     /**
@@ -80,8 +106,21 @@ class DashboardProductTypeController extends Controller
      * @param  \App\Models\ProductType  $productType
      * @return \Illuminate\Http\Response
      */
-    public function destroy(ProductType $productType)
+    public function destroy($slug)
     {
-        //
+        // Find the flower type by its slug
+        $productType = ProductType::where('slug', $slug)->firstOrFail();
+
+        // Delete the flower type
+        $productType->delete();
+
+        // Redirect back with a success message
+        return redirect('/dashboard/collections/new')->with('success', 'Product type has been deleted!');
+    }
+
+    public function checkSlug(Request $request)
+    {
+        $slug = SlugService::createSlug(ProductType::class, 'slug', $request->nama);
+        return response()->json(['slug' => $slug]);
     }
 }

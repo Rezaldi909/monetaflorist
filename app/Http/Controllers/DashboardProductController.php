@@ -10,6 +10,7 @@ use Illuminate\Http\Request;
 use \Cviebrock\EloquentSluggable\Services\SlugService;
 use Illuminate\Support\Facades\Storage;
 use SebastianBergmann\CodeCoverage\Report\Html\Dashboard;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class DashboardProductController extends Controller
 {
@@ -47,30 +48,32 @@ class DashboardProductController extends Controller
      */
     public function store(Request $request)
     {
-
+        // Validate the input data
         $validatedData = $request->validate([
             'flower_type_id' => 'required',
             'product_type_id' => 'required',
             'event_type_id' => 'required',
             'nama' => 'required|max:255',
             'slug' => 'required|unique:products',
-            'harga' => 'required|numeric|lt:10000000',
-            'image' => 'image|file|max:1024'
-             
+            'harga' => 'required|numeric',
+            'image' => 'image|file|max:1048', // Ensure it's a valid image file
         ]);
-
-        if($request->file('image')) {
+    
+        // Handle the image upload if a file is present
+        if ($request->file('image')) {
             $validatedData['image'] = $request->file('image')->store('product-images');
         }
-
+    
+        // Assign the authenticated user's ID to the product
         $validatedData['users_id'] = auth()->user()->id;
-
+    
+        // Create the product in the database
         Product::create($validatedData);
-
+    
+        // Redirect back with a success message
         return redirect('/dashboard/products')->with('success', 'New product has been added!');
-
-        
     }
+    
 
     /**
      * Display the specified resource.
@@ -165,6 +168,16 @@ class DashboardProductController extends Controller
     {
         $slug = SlugService::createSlug(Product::class, 'slug', $request->nama);
         return response()->json(['slug' => $slug]);
+    }
+
+
+    public function generatePDF()
+    {
+        $products = Product::with(['flowerType', 'productType', 'event'])->get();
+
+        $pdf = Pdf::loadView('dashboard.products.pdf', compact('products'))->setPaper('a4', 'landscape');
+
+        return $pdf->stream('products-report.pdf');
     }
 
 }

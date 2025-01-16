@@ -5,47 +5,33 @@
     <h1 class="h2">Edit Custom Order</h1>  
 </div>
 
-<form method="POST" action="{{ route('custom-orders.update', $customOrder->id) }}">
-    @method('PUT')
-    @csrf
-    <div class="mb-3">
-        <label for="name" class="form-label">Name</label>
-        <input type="text" class="form-control @error('name') is-invalid @enderror" id="name" name="name" value="{{ old('name', $customOrder->name) }}">
-        @error('name')
-            <div class="invalid-feedback">
-                {{ $message }}
-            </div>
-        @enderror
-    </div>
-    <div class="mb-3">
-        <label for="email" class="form-label">Email</label>
-        <input type="email" class="form-control @error('email') is-invalid @enderror" id="email" name="email" value="{{ old('email', $customOrder->email) }}">
-        @error('email')
-            <div class="invalid-feedback">
-                {{ $message }}
-            </div>
-        @enderror
-    </div>
-    <div class="mb-3">
-        <label for="phone" class="form-label">Phone</label>
-        <input type="text" class="form-control @error('phone') is-invalid @enderror" id="phone" name="phone" value="{{ old('phone', $customOrder->phone) }}">
-        @error('phone')
-            <div class="invalid-feedback">
-                {{ $message }}
-            </div>
-        @enderror
-    </div>
-    <div class="mb-3">
-        <label for="message" class="form-label">Message</label>
-        <textarea class="form-control @error('message') is-invalid @enderror" id="message" name="message" rows="3">{{ old('message', $customOrder->message) }}</textarea>
-        @error('message')
-            <div class="invalid-feedback">
-                {{ $message }}
-            </div>
-        @enderror
-    </div>
-    <div class="d-grid gap-2">
-        <button type="submit" class="btn btn-primary">Update Order</button>
-    </div>
-</form>
+<div class="col-lg-8">
+
+    <form action="/dashboard/custom-order/{{ $customOrder->id }}" method="post">
+        @method('put')
+        @csrf
+        <div class="mb-3">
+            <label for="name" class="form-label">Name</label>
+            <input type="text" class="form-control" id="name" name="name" value="{{ old('name', $customOrder->name) }}" required>
+        </div>
+    
+        <div class="mb-3">
+            <label for="email" class="form-label">Email</label>
+            <input type="email" class="form-control" id="email" name="email" value="{{ old('email', $customOrder->email) }}" required>
+        </div>
+    
+        <div class="mb-3">
+            <label for="phone" class="form-label">Phone</label>
+            <input type="text" class="form-control" id="phone" name="phone" value="{{ old('phone', $customOrder->phone) }}" required>
+        </div>
+    
+        <div class="mb-3">
+            <label for="message" class="form-label">Message</label>
+            <textarea class="form-control" id="message" name="message" rows="4" required>{{ old('message', $customOrder->message) }}</textarea>
+        </div>
+    
+        <button type="submit" class="btn btn-primary">Update Contact</button>
+    </form>
+</div>
+
 @endsection

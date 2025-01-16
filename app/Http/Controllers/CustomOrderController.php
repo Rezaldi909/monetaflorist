@@ -48,7 +48,7 @@ class CustomOrderController extends Controller
         CustomOrder::create($validatedData);
 
         // Redirect dengan pesan sukses
-        return redirect()->back()->with('success', 'Your message has been sent successfully!');
+        return redirect('/')->with('success', 'Your message has been sent successfully!');
     }
 
     /**

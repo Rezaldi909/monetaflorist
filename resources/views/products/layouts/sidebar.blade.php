@@ -1,7 +1,7 @@
 <nav id="sidebarMenu" class="col-md-3 col-lg-2 d-md-block sidebar overflow-visible">
     <div class="position-sticky">
         <ul class="nav flex-column">
-            <h6 class="sidebar-heading d-flex justify-content-between align-items-center px-3 mt-4 mb-2 text-muted">
+            <h6 class="sidebar-heading d-flex justify-content-between align-items-center px-3 mt-4 mb-2 text-new fw-bold">
                 <span>FRESH FLOWERS</span>
             </h6>
             @foreach ($flowers as $type)
@@ -9,7 +9,7 @@
             @endforeach
         </ul>
 
-        <h6 class="sidebar-heading d-flex justify-content-between align-items-center px-3 mt-4 mb-2 text-muted">
+        <h6 class="sidebar-heading d-flex justify-content-between align-items-center px-3 mt-4 mb-2 text-new fw-bold">
             <span>PRODUCTS</span>
         </h6>
         <ul class="nav flex-column">
@@ -18,7 +18,7 @@
             @endforeach
         </ul>
 
-        <h6 class="sidebar-heading d-flex justify-content-between align-items-center px-3 mt-4 mb-2 text-muted">
+        <h6 class="sidebar-heading d-flex justify-content-between align-items-center px-3 mt-4 mb-2 text-new fw-bold">
             <span>EVENTS</span>
         </h6>
         <ul class="nav flex-column">

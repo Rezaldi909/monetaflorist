@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\EventType;
 use Illuminate\Http\Request;
+use \Cviebrock\EloquentSluggable\Services\SlugService;
 
 class DashboardEventTypeController extends Controller
 {
@@ -26,7 +27,7 @@ class DashboardEventTypeController extends Controller
      */
     public function create()
     {
-        //
+        return view('dashboard.collections.event.create');
     }
 
     /**
@@ -37,7 +38,14 @@ class DashboardEventTypeController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $validatedData = $request->validate([
+            'nama' => 'required|max:255',
+        ]);
+    
+        // The slug will be automatically generated
+        EventType::create($validatedData);
+    
+        return redirect('/dashboard/collections/event')->with('success', 'New Event type has been created!');
     }
 
     /**
@@ -57,9 +65,15 @@ class DashboardEventTypeController extends Controller
      * @param  \App\Models\EventType  $eventType
      * @return \Illuminate\Http\Response
      */
-    public function edit(EventType $eventType)
+    public function edit($slug)
     {
-        //
+        // Find the flower type by its slug
+        $eventType = EventType::where('slug', $slug)->firstOrFail();
+
+        // Return the view with the flower type data
+        return view('dashboard.collections.event.edit', [
+            'eventType' => $eventType
+        ]);
     }
 
     /**
@@ -69,9 +83,22 @@ class DashboardEventTypeController extends Controller
      * @param  \App\Models\EventType  $eventType
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, EventType $eventType)
+    public function update(Request $request, $slug)
     {
-        //
+        // Validate the incoming request data
+        $validatedData = $request->validate([
+            'nama' => 'required|max:255',
+            'slug' => 'required|unique:flower_types,slug,' . $slug . ',slug'
+        ]);
+
+        // Find the flower type by its slug
+        $eventType = EventType::where('slug', $slug)->firstOrFail();
+
+        // Update the flower type with the validated data
+        $eventType->update($validatedData);
+
+        // Redirect back with a success message
+        return redirect('/dashboard/collections/event')->with('success', 'Event type has been updated!');
     }
 
     /**
@@ -80,8 +107,21 @@ class DashboardEventTypeController extends Controller
      * @param  \App\Models\EventType  $eventType
      * @return \Illuminate\Http\Response
      */
-    public function destroy(EventType $eventType)
+    public function destroy($slug)
     {
-        //
+        // Find the flower type by its slug
+        $eventType = EventType::where('slug', $slug)->firstOrFail();
+
+        // Delete the flower type
+        $eventType->delete();
+
+        // Redirect back with a success message
+        return redirect('/dashboard/collections/event')->with('success', 'Event type has been deleted!');
+    }
+
+    public function checkSlug(Request $request)
+    {
+        $slug = SlugService::createSlug(EventType::class, 'slug', $request->nama);
+        return response()->json(['slug' => $slug]);
     }
 }

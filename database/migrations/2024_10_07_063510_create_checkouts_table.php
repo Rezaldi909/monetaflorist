@@ -19,12 +19,9 @@ class CreateCheckoutsTable extends Migration
             $table->string('first_name');
             $table->string('last_name');
             $table->string('address');
-            $table->string('city');
             $table->string('phone');
-            // $table->string('postal_code');
-            // $table->enum('payment_method', ['credit_card', 'bank_transfer', 'paypal', 'cash_on_delivery']);
             $table->text('order_notes')->nullable(); // Optional notes
-            $table->boolean('same_as_shipping')->default(true); // Billing address same as shipping
+            $table->enum('status', ['Pending', 'Processed', 'Completed'])->default('Pending');
             $table->timestamps();
         });
 
@@ -33,7 +30,9 @@ class CreateCheckoutsTable extends Migration
             $table->foreignId('checkout_id')->constrained()->onDelete('cascade'); // Link to checkout
             $table->string('name'); // Product name
             $table->decimal('price', 10, 2); // Product price
+            $table->string('image'); // Delivery options
             $table->string('delivery_options'); // Delivery options
+            $table->date('delivery_date'); // Delivery options
             $table->string('delivery_time'); // Delivery time
             $table->string('sender_name');
             $table->string('sender_phone');

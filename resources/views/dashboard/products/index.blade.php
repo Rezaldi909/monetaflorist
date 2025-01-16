@@ -13,7 +13,9 @@
 
 <div class="table-responsive col-lg-11">
     <a href="/dashboard/products/create" class="btn btn-primary mb-3">Create new product</a>
+    <a href="/dashboard/products/pdf" class="btn btn-secondary mb-3">Download PDF</a>
     <table class="table table-striped table-sm">
+
       <thead>
         <tr>
           <th scope="col">No</th>
@@ -36,7 +38,7 @@
             </div>
           </td>
           <td>{{ $product->nama }}</td>
-          <td>{{ $product->harga }}</td>
+          <td>{{ number_format($product->harga, 0, ',', '.') }}</td>
           <td>{{ $product->flowerType->nama }}</td>
           <td>{{ $product->productType->nama }}</td>
           <td>{{ $product->event->nama }}</td>

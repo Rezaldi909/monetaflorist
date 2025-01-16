@@ -15,7 +15,7 @@
 
 
       <main class="form-signin">
-        <h1 class="h3 mb-3 fw-normal text-center">Login</h1>
+        <h1 class="h3 mb-3 fw-bold text-center text-new">Login</h1>
         <form action="/login" method="post">
           @csrf
           <div class="form-floating">
@@ -33,7 +33,7 @@
             <input type="password" name="password" class="form-control" id="password" placeholder="Password" required>
             <label for="password">Password</label>
           </div>
-          <button class="w-100 btn btn-lg btn-primary" type="submit">Login</button>
+          <button class="w-100 btn btn-lg btn-new text-white" type="submit">LOGIN</button>
         </form>
       </main>
   </div>

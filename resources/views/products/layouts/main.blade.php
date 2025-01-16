@@ -11,7 +11,7 @@
 <body>
     
     @include('partials.navbar')
-    <h1 class="my-5 text-center">{{ $title }}</h1>
+    <h1 class="my-5 text-center text-new">{{ $title }}</h1>
     <div class="d-flex">
         @include('products.layouts.sidebar') <!-- Include sidebar here -->
         <div class="container-fluid"> <!-- Use container-fluid to take full width -->

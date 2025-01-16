@@ -3,8 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\FlowerType;
-use App\Models\ProductType;
 use Illuminate\Http\Request;
+use \Cviebrock\EloquentSluggable\Services\SlugService;
 
 class DashboardFlowerTypeController extends Controller
 {
@@ -36,18 +36,21 @@ class DashboardFlowerTypeController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
-    {
 
-        $validatedData = $request->validate([
-            'nama' => 'required|max:255',
-            'slug' => 'required|unique:flower_types'
-        ]);
+     public function store(Request $request)
+     {
+         $validatedData = $request->validate([
+             'nama' => 'required|max:255',
+         ]);
+     
+         // The slug will be automatically generated
+         FlowerType::create($validatedData);
+     
+         return redirect('/dashboard/collections/flower')->with('success', 'New flower type has been created!');
+     }
+     
+     
 
-        FlowerType::create($validatedData);
-
-        return redirect('/dashboard/collections/flower')->with('success', 'New flower type has been created!');
-    }
 
     /**
      * Display the specified resource.
@@ -66,9 +69,15 @@ class DashboardFlowerTypeController extends Controller
      * @param  \App\Models\FlowerType  $flowerType
      * @return \Illuminate\Http\Response
      */
-    public function edit(FlowerType $flowerType)
+    public function edit($slug)
     {
-        //
+        // Find the flower type by its slug
+        $flowerType = FlowerType::where('slug', $slug)->firstOrFail();
+
+        // Return the view with the flower type data
+        return view('dashboard.collections.flower.edit', [
+            'flowerType' => $flowerType
+        ]);
     }
 
     /**
@@ -78,9 +87,22 @@ class DashboardFlowerTypeController extends Controller
      * @param  \App\Models\FlowerType  $flowerType
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, FlowerType $flowerType)
+    public function update(Request $request, $slug)
     {
-        //
+        // Validate the incoming request data
+        $validatedData = $request->validate([
+            'nama' => 'required|max:255',
+            'slug' => 'required|unique:flower_types,slug,' . $slug . ',slug'
+        ]);
+
+        // Find the flower type by its slug
+        $flowerType = FlowerType::where('slug', $slug)->firstOrFail();
+
+        // Update the flower type with the validated data
+        $flowerType->update($validatedData);
+
+        // Redirect back with a success message
+        return redirect('/dashboard/collections/flower')->with('success', 'Flower type has been updated!');
     }
 
     /**
@@ -89,9 +111,21 @@ class DashboardFlowerTypeController extends Controller
      * @param  \App\Models\FlowerType  $flowerType
      * @return \Illuminate\Http\Response
      */
-    public function destroy(FlowerType $flowerType)
+    public function destroy($slug)
     {
-        $flowerType->forceDelete();
+        // Find the flower type by its slug
+        $flowerType = FlowerType::where('slug', $slug)->firstOrFail();
+
+        // Delete the flower type
+        $flowerType->delete();
+
+        // Redirect back with a success message
         return redirect('/dashboard/collections/flower')->with('success', 'Flower type has been deleted!');
+    }
+
+    public function checkSlug(Request $request)
+    {
+        $slug = SlugService::createSlug(FlowerType::class, 'slug', $request->nama);
+        return response()->json(['slug' => $slug]);
     }
 }

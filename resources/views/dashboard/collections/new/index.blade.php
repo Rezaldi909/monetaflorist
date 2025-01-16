@@ -2,7 +2,7 @@
 
 @section('container')
 <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-    <h1 class="h2">Products</h1>  
+    <h1 class="h2">Product Type</h1>  
 </div>
 
 @if (@session()->has('success'))
@@ -12,7 +12,7 @@
 @endif
 
 <div class="table-responsive col-lg-6">
-    <a href="/dashboard/products/create" class="btn btn-primary mb-3">Create new product</a>
+    <a href="/dashboard/collections/new/create" class="btn btn-primary mb-3">Create new product type</a>
     <table class="table table-striped table-sm">
       <thead>
         <tr>
@@ -27,12 +27,13 @@
           <td>{{ $loop->iteration }}</td>
           <td>{{ $collection->nama }}</td>
           <td>
-            {{-- <a href="/dashboard/collections/{{ $collection->slug }}" class="badge bg-info"><span data-feather="eye"></span></a>
-            <a href="/dashboard/collections/{{ $collection->slug }}/edit" class="badge bg-warning"><span data-feather="edit"></span></a> --}}
-            <form action="/dashboard/collections/{{ $collection->slug }}" method="post" class="d-inline">
+            <a href="/dashboard/collections/new/{{ $collection->slug }}/edit" class="badge bg-warning"><span data-feather="edit"></span></a>
+            <form action="/dashboard/collections/new/{{ $collection->slug }}" method="post" class="d-inline">
               @method('delete')
               @csrf
-              <button class="badge bg-danger border-0" onclick="return confirm('Are you sure?')"><span data-feather="x-circle"></span></button>
+              <button class="badge bg-danger border-0" onclick="return confirm('Are you sure?')">
+                <span data-feather="x-circle"></span>
+              </button>
             </form>
           </td>
         </tr>

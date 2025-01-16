@@ -3,7 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Models\Checkout;
+use App\Models\CheckoutItem;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
+use Barryvdh\DomPDF\Facade\Pdf;
+
 
 class DashboardCheckoutController extends Controller
 {
@@ -51,6 +55,7 @@ class DashboardCheckoutController extends Controller
         // Mengambil semua item yang berhubungan dengan checkout tertentu
         $checkoutItems = $checkout->items;
 
+
         // Kirim data checkout dan checkoutItems ke view
         return view('dashboard.checkouts.show', [
             'title' => "checkoutItems",
@@ -66,10 +71,15 @@ class DashboardCheckoutController extends Controller
      * @param  \App\Models\Checkout  $checkout
      * @return \Illuminate\Http\Response
      */
-    public function edit(Checkout $checkout)
+    public function edit($id)
     {
-        //
+        // Temukan checkout berdasarkan ID (menggunakan findOrFail agar jika tidak ada data ditemukan, akan melempar exception)
+        $order = Checkout::findOrFail($id);
+    
+        // Kirim data ke view
+        return view('dashboard.checkouts.edit', compact('order'));
     }
+    
 
     /**
      * Update the specified resource in storage.
@@ -78,10 +88,28 @@ class DashboardCheckoutController extends Controller
      * @param  \App\Models\Checkout  $checkout
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Checkout $checkout)
+    public function update(Request $request, $id)
     {
-        //
+        $order = Checkout::findOrFail($id);
+    
+        // Validasi input
+        $validatedData = $request->validate([
+            'first_name' => 'required|max:255',
+            'last_name' => 'required|max:255',
+            'email' => 'required|email',
+            'address' => 'required|max:255',
+            'phone' => 'required|max:15',
+            'status' => 'required|in:Pending,Processed,Completed',
+            'order_notes' => 'nullable|string',
+        ]);
+    
+        // Update data order
+        $order->update($validatedData);
+    
+        // Redirect dengan pesan sukses
+        return redirect()->route('checkouts.index')->with('success', 'Order updated successfully!');
     }
+    
 
     /**
      * Remove the specified resource from storage.
@@ -97,5 +125,25 @@ class DashboardCheckoutController extends Controller
         // Redirect kembali ke halaman index dengan pesan sukses
         return redirect('/dashboard/checkouts')->with('success', 'Checkout has been deleted successfully.');
     }
+
+    public function generatePdf()
+    {
+        // Ambil semua data order dan items terkait
+        $orders = Checkout::with('items')->get();
+    
+        // Hitung total harga untuk setiap order
+        $orders->map(function ($order) {
+            $order->totalPrice = $order->items->sum('price'); // Menggunakan relasi items
+            return $order;
+        });
+    
+        // Muat view untuk laporan PDF
+        $pdf = Pdf::loadView('dashboard.checkouts.pdf', compact('orders'))->setPaper('a4', 'landscape');
+    
+        // Kembalikan file PDF untuk diunduh
+        return $pdf->stream('orders-report.pdf');
+    }
+    
+    
 
 }

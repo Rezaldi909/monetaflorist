@@ -59,7 +59,9 @@ class DashboardContactController extends Controller
      */
     public function edit(Contact $contact)
     {
-        //
+        return view('dashboard.contacts.edit', [
+            'contact' => $contact
+        ]);
     }
 
     /**
@@ -71,7 +73,19 @@ class DashboardContactController extends Controller
      */
     public function update(Request $request, Contact $contact)
     {
-        //
+                // Validasi data
+                $validatedData = $request->validate([
+                    'name' => 'required|max:255',
+                    'email' => 'required|email',
+                    'phone' => 'required',
+                    'message' => 'required',
+                ]);
+        
+                // Update data contact
+                $contact->update($validatedData);
+        
+                // Redirect dengan pesan sukses
+                return redirect()->route('dashboard.contacts.index')->with('success', 'Contact has been updated!');
     }
 
     /**
