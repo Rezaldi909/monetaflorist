@@ -21,7 +21,7 @@ class CreateCheckoutsTable extends Migration
             $table->string('address');
             $table->string('phone');
             $table->text('order_notes')->nullable(); // Optional notes
-            $table->enum('status', ['Pending', 'Processed', 'Completed'])->default('Pending');
+            $table->enum('status', ['Pending', 'Processed', 'Completed', 'Cancelled', 'Refund'])->default('Pending');
             $table->timestamps();
         });
 

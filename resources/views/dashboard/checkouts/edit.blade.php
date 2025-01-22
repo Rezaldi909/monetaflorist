@@ -57,6 +57,8 @@
                 <option value="Pending" {{ $order->status == 'Pending' ? 'selected' : '' }}>Pending</option>
                 <option value="Processed" {{ $order->status == 'Processed' ? 'selected' : '' }}>Processed</option>
                 <option value="Completed" {{ $order->status == 'Completed' ? 'selected' : '' }}>Completed</option>
+                <option value="Cancelled" {{ $order->status == 'Cancelled' ? 'selected' : '' }}>Cancelled</option>
+                <option value="Refund" {{ $order->status == 'Refund' ? 'selected' : '' }}>Refund</option>
             </select>
             @error('status')
                 <div class="alert alert-danger mt-2">{{ $message }}</div>

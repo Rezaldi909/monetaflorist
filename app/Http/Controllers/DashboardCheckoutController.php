@@ -7,7 +7,7 @@ use App\Models\CheckoutItem;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Barryvdh\DomPDF\Facade\Pdf;
-
+use Twilio\Rest\Client;
 
 class DashboardCheckoutController extends Controller
 {
@@ -119,16 +119,28 @@ class DashboardCheckoutController extends Controller
             'email' => 'required|email',
             'address' => 'required|max:255',
             'phone' => 'required|max:15',
-            'status' => 'required|in:Pending,Processed,Completed',
+            'status' => 'required|in:Pending,Processed,Completed,Cancelled,Refund',
             'order_notes' => 'nullable|string',
         ]);
+    
+        // Simpan status sebelumnya untuk pesan WhatsApp
+        $previousStatus = $order->status;
     
         // Update data order
         $order->update($validatedData);
     
+        // Kirim pesan WhatsApp jika status diperbarui
+        if ($validatedData['status'] !== $previousStatus) {
+            // Hanya kirim pesan untuk status 'processed' atau 'cancelled'
+            if ($validatedData['status'] == 'Processed' || $validatedData['status'] == 'Cancelled' || $validatedData['status'] == 'Refund')  {
+                $this->sendWhatsAppMessage($order);
+            }
+        }
+    
         // Redirect dengan pesan sukses
         return redirect()->route('checkouts.index')->with('success', 'Order updated successfully!');
     }
+    
     
 
     /**
@@ -166,6 +178,80 @@ class DashboardCheckoutController extends Controller
         return $pdf->stream('orders-report-completed.pdf');
     }
     
+    private function sendWhatsAppMessage($order)
+    {
+        $sid = env('TWILIO_SID');
+        $token = env('TWILIO_AUTH_TOKEN');
+        $twilioPhoneNumber = env('TWILIO_WHATSAPP_NUMBER');
+        
+        $client = new Client($sid, $token);
+    
+        $totalPrice = 0;
+        foreach ($order->items as $item) {
+            $totalPrice += $item->price; // Asumsikan harga disimpan dalam atribut price
+        }
+    
+        // Kondisi untuk status 'Processed'
+        if ($order->status == 'Processed') {
+            $message = "🌸 *Order Confirmation* 🌸\n\n";
+            $message .= "*Customer Details:*\n";
+            $message .= "Name: {$order->first_name} {$order->last_name}\n";
+            $message .= "Address: {$order->address}\n";
+            $message .= "Phone: {$order->phone}\n\n";
+    
+            $message .= "*Order Details:*\n";
+            foreach ($order->items as $item) {
+                $message .= "- {$item->name} | Rp " . number_format($item->price, 0, ',', '.') . "\n";
+            }
+    
+            $message .= "\n*Total:* Rp " . number_format($totalPrice, 0, ',', '.') . "\n\n";
+            $message .= "Thank you for your payment! 🌟\n";
+            $message .= "Your payment proof has been received, and your order will be processed soon.\n";
+    
+        // Kondisi untuk status 'Cancelled'
+        } elseif ($order->status == 'Cancelled') {
+            $message = "🌸 *Order Cancellation* 🌸\n\n";
+            $message .= "Hello, {$order->first_name} {$order->last_name}. Unfortunately, your order has been cancelled.\n\n";
+            $message .= "*Order Details:*\n";
+            foreach ($order->items as $item) {
+                $message .= "- {$item->name} | Rp " . number_format($item->price, 0, ',', '.') . "\n";
+            }
+            $message .= "\n*Total:* Rp " . number_format($totalPrice, 0, ',', '.') . "\n\n";
+            $message .= "We are sorry for the inconvenience. Please contact us if you have any questions.\n";
+            $message .= "Thank you for your understanding. 🌸";
+    
+        // Kondisi untuk status 'Refund'
+        } elseif ($order->status == 'Refund') {
+            $message = "🌸 *Refund Processed* 🌸\n\n";
+            $message .= "Hello, {$order->first_name} {$order->last_name}. Your order has been cancelled, and we have initiated a refund for your purchase.\n\n";
+            $message .= "*Order Details:*\n";
+            foreach ($order->items as $item) {
+                $message .= "- {$item->name} | Rp " . number_format($item->price, 0, ',', '.') . "\n";
+            }
+            $message .= "You should receive your refund shortly.\n";
+            $message .= "Thank you for your patience and understanding. 🌸";
+        }
+    
+        if ($message !== "") {
+            $phone = $order->phone;
+            if (substr($phone, 0, 1) == '0') {
+                // Remove the leading zero and replace it with +62
+                $phone = '+62' . substr($phone, 1);
+            }
+    
+            // Kirim pesan WhatsApp
+            $client->messages->create(
+                "whatsapp:{$phone}", // Nomor WhatsApp pelanggan
+                [
+                    'from' => $twilioPhoneNumber, // Nomor WhatsApp Twilio Anda
+                    'body' => $message, // Body pesan
+                ]
+            );
+        }
+    }
+       
+ 
+
     
     
 
