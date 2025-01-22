@@ -18,6 +18,12 @@ class CheckoutItem extends Model
     /**
      * Relasi dengan model Checkout (many ke 1).
      */
+    public function getItemTotalAttribute()
+    {
+        // $cleanedPrice = str_replace(['Rp', ',', '.'], '', $this->price);
+        return (float) $this->price * $this->quantity;
+    }
+
     public function checkout()
     {
         return $this->belongsTo(Checkout::class);

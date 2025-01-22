@@ -87,7 +87,7 @@
                 </div>
             </div>
             <div class="card-footer text-end text-muted">
-                <h5><strong>Total Price:</strong> Rp {{ number_format($totalPrice, 2) }}</h5>
+                <h5><strong>Total Price:</strong> Rp {{ number_format($total, 0, ',', '.') }}</h5>
             </div>
         </div>
 

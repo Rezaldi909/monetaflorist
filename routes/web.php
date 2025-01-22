@@ -80,9 +80,11 @@ Route::get('/event/{type:slug}', [EventTypeController::class, 'show'])->name('ev
 
 Route::post('/cart', [CartController::class, 'addToCart']);
 Route::delete('/cart/delete/{index}', [CartController::class, 'delete'])->name('cart.delete');
+Route::put('/cart/update/{index}', [CartController::class, 'update'])->name('cart.update');
 Route::get('/cart', [CartController::class, 'show'])->name('cart');
-Route::get('/checkout', [CartController::class, 'showCheckout'])->name('checkout');
 
+
+Route::get('/checkout', [CartController::class, 'showCheckout'])->name('checkout');
 Route::post('/place-order', [CheckoutController::class, 'store'])->name('checkout.store');
 
 Route::get('/login', [LoginController::class, 'index'])->name('login')->middleware('guest');

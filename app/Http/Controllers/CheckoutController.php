@@ -44,6 +44,7 @@ class CheckoutController extends Controller
                     'name' => $item['name'],
                     'price' => (float) str_replace('.', '', $item['price']),
                     'image' => $item['image'], // Pastikan menggunakan 'image'
+                    'quantity' => $item['quantity'],
                     'delivery_options' => $item['delivery_options'],
                     'delivery_time' => $item['delivery_time'],
                     'delivery_date' => $item['delivery_date'],
@@ -93,10 +94,11 @@ class CheckoutController extends Controller
         $client = new Client($twilioSid, $twilioAuthToken);
     
         // Hitung total harga pesanan
-        $totalPrice = 0;
+        $total = 0;
         foreach ($checkoutItems as $item) {
-            // Convert price to float and add it to totalPrice
-            $totalPrice += floatval(str_replace('.', '', $item['price']));
+            $cleanedPrice = str_replace(['Rp', ',', '.'], '', $item['price']);
+            $itemTotal = (float) $cleanedPrice * $item['quantity'];
+            $total += $itemTotal;
         }
     
         // Format pesan WhatsApp
@@ -108,11 +110,12 @@ class CheckoutController extends Controller
     
         $message .= "*Order Details:*\n";
         foreach ($checkoutItems as $item) {
-            $message .= "- {$item['name']} | Rp " . number_format(floatval(str_replace('.', '', $item['price'])), 0, ',', '.') . "\n";
+            $message .= "- {$item['name']} * {$item['quantity']} | Rp " . number_format(floatval(str_replace('.', '', $item['price'])), 0, ',', '.') . "\n";
         }
+        
     
         // Format total price
-        $message .= "\n*Total:* Rp " . number_format($totalPrice, 0, ',', '.') . "\n\n";
+        $message .= "\n*Total:* Rp " . number_format($total, 0, ',', '.') . "\n\n";
     
         // Update message to request payment proof
         $message .= "Please send us your payment proof so we can process your order.\n";

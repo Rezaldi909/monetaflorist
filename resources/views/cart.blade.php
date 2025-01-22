@@ -16,7 +16,7 @@
 
             @if(!empty($cart))
             <ul class="list-group">
-                @foreach($cart as $item)
+                @foreach($cart as $index => $item)
                 <div class="container border-bottom py-3">
                     <div class="row mb-3">
                       <div class="col-4 col-lg-2 d-flex justify-content-center">
@@ -35,12 +35,30 @@
                                     <p class="mb-1">From  :  {{ $item['from'] }}</p>
                                     <p class="mb-1">To  :  {{ $item['to'] }}</p>
                                     <p class="mb-1">Message  :  {{ $item['message'] }}</p>
-                                </small>
+                                 </small>
                             </div>
                         </div>
                       </div>
                       <div class="col-12 col-lg-3 text-end align-self-center">
                         <p class="fw-bold text-muted">Rp {{$item['price'] }}</p>
+                        
+                        <!-- Quantity Buttons -->
+                        <form action="{{ route('cart.update', $index) }}" method="POST" class="d-inline-block">
+                            @csrf
+                            @method('PUT')
+
+                            <div class="d-flex justify-content-between">
+                                <button type="submit" class="btn btn-outline-secondary" name="quantity" value="{{ max(1, $item['quantity'] - 1) }}" {{ $item['quantity'] <= 1 ? 'disabled' : '' }}>
+                                    <i class="bi bi-dash"></i>
+                                </button>
+                                
+                                <input type="number" class="form-control mx-2 w-auto text-center" value="{{ $item['quantity'] }}" min="1" max="10" readonly>
+
+                                <button type="submit" class="btn btn-outline-secondary" name="quantity" value="{{ min(10, $item['quantity'] + 1) }}" {{ $item['quantity'] >= 10 ? 'disabled' : '' }}>
+                                    <i class="bi bi-plus"></i>
+                                </button>
+                            </div>
+                        </form>
                       </div>
                     </div>
                 </div>

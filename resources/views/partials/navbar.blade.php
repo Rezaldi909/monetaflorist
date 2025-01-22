@@ -122,32 +122,31 @@
   <div class="offcanvas-body">
     @if(session('cart'))
         <ul class="list-group">
-            @foreach(session('cart') as $index => $item)
-                <li class="list-group-item mb-3 border position-relative">
-                  <div class="row">
-                    <!-- Icon delete -->
-                    <form action="{{ route('cart.delete', $index) }}" method="POST" class="delete-icon">
-                      @csrf
-                      @method('DELETE')
-                      <button type="submit" class="btn p-0 border-0 text-danger float-end" title="Remove Item">
-                          <i class="bi bi-x-circle fs-4"></i>
-                      </button>
-                    </form>
-                  
+@foreach(session('cart') as $index => $item)
+    <li class="list-group-item mb-3 border position-relative">
+        <div class="row">
+            <!-- Icon delete -->
+            <form action="{{ route('cart.delete', $index) }}" method="POST" class="delete-icon">
+                @csrf
+                @method('DELETE')
+                <button type="submit" class="btn p-0 border-0 text-danger float-end" title="Remove Item">
+                    <i class="bi bi-x-circle fs-4"></i>
+                </button>
+            </form>
 
-                    <!-- Product Image -->
-                    <div class="col-4 col-lg-3 d-flex justify-content-center">
-                      <img src="{{ asset('storage/' . $item['image']) }}" alt="Product Image" class="img-fluid rounded" style="max-height: 150px;">
-                    </div>
+            <!-- Product Image -->
+            <div class="col-4 col-lg-3 d-flex justify-content-center">
+                <img src="{{ asset('storage/' . $item['image']) }}" alt="Product Image" class="img-fluid rounded" style="max-height: 150px;">
+            </div>
 
-                    <!-- Product Details -->
-                    <div class="col-8 col-lg-9">
-                      <div class="m-0 p-0">
-                        <div class="container" style="font-size: 14px;">
-                          <div class="mb-2 text-new">
+            <!-- Product Details -->
+            <div class="col-8 col-lg-9">
+                <div class="m-0 p-0">
+                    <div class="container" style="font-size: 14px;">
+                        <div class="mb-2 text-new">
                             <strong>{{ $item['name'] }}</strong>
-                          </div>
-                          <div class="text-muted">
+                        </div>
+                        <div class="text-muted">
                             <span>Delivery Options: {{ $item['delivery_options'] }}</span><br>
                             <span>Delivery Time: {{ $item['delivery_time'] }}</span><br>
                             <span>Delivery Date:</span> {{ \Carbon\Carbon::parse($item['delivery_date'])->format('d/m/Y') }}<br>
@@ -156,22 +155,23 @@
                             <span>From: {{ $item['from'] }}</span><br>
                             <span>To: {{ $item['to'] }}</span><br>
                             <span>Message: {{ $item['message'] }}</span><br>
-                          </div>
-                          <div class="mt-2 text-new">
-                            <strong>Price: {{ $item['price'] }}</strong>
-                          </div>
                         </div>
-                      </div>
+                        <div class="mt-2 text-new">
+                            <strong>Price: {{ $item['price'] }}</strong>
+                        </div>
                     </div>
-                  </div>
-                </li>
-            @endforeach
+                </div>
+
+            </div>
+        </div>
+    </li>
+@endforeach
+
         </ul>
         <div class="d-grid gap-2 mt-4">
           <form action="{{ route('cart') }}" method="GET">
             <div class="d-grid gap-2">
               <button type="submit" class="btn btn-new float-end fw-bold">CHECKOUT</button>
-
             </div>
           </form>
         </div>
@@ -180,6 +180,7 @@
     @endif
   </div>
 </div>
+
 
 
 

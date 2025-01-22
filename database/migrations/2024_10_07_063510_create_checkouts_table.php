@@ -30,6 +30,7 @@ class CreateCheckoutsTable extends Migration
             $table->foreignId('checkout_id')->constrained()->onDelete('cascade'); // Link to checkout
             $table->string('name'); // Product name
             $table->decimal('price', 10, 2); // Product price
+            $table->integer('quantity'); // Product price
             $table->string('image'); // Delivery options
             $table->string('delivery_options'); // Delivery options
             $table->date('delivery_date'); // Delivery options

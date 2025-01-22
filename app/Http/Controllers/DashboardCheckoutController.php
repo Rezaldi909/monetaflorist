@@ -75,12 +75,14 @@ class DashboardCheckoutController extends Controller
         // Mengambil semua item yang berhubungan dengan checkout tertentu
         $checkoutItems = $checkout->items;
 
+        $total = $checkout->items->sum('item_total');
 
         // Kirim data checkout dan checkoutItems ke view
         return view('dashboard.checkouts.show', [
             'title' => "checkoutItems",
             'checkout' => $checkout,
-            'checkoutItems' => $checkoutItems
+            'checkoutItems' => $checkoutItems,
+            'total' => $total,
         ]);
         
     }
@@ -186,11 +188,8 @@ class DashboardCheckoutController extends Controller
         
         $client = new Client($sid, $token);
     
-        $totalPrice = 0;
-        foreach ($order->items as $item) {
-            $totalPrice += $item->price; // Asumsikan harga disimpan dalam atribut price
-        }
-    
+        $total = $order->items->sum('item_total');
+        
         // Kondisi untuk status 'Processed'
         if ($order->status == 'Processed') {
             $message = "🌸 *Order Confirmation* 🌸\n\n";
@@ -201,10 +200,10 @@ class DashboardCheckoutController extends Controller
     
             $message .= "*Order Details:*\n";
             foreach ($order->items as $item) {
-                $message .= "- {$item->name} | Rp " . number_format($item->price, 0, ',', '.') . "\n";
+                $message .= "- {$item->name} * {$item->quantity} | Rp " . number_format($item->price, 0, ',', '.') . "\n";
             }
     
-            $message .= "\n*Total:* Rp " . number_format($totalPrice, 0, ',', '.') . "\n\n";
+            $message .= "\n*Total:* Rp " . number_format($total, 0, ',', '.') . "\n\n";
             $message .= "Thank you for your payment! 🌟\n";
             $message .= "Your payment proof has been received, and your order will be processed soon.\n";
     
@@ -214,9 +213,10 @@ class DashboardCheckoutController extends Controller
             $message .= "Hello, {$order->first_name} {$order->last_name}. Unfortunately, your order has been cancelled.\n\n";
             $message .= "*Order Details:*\n";
             foreach ($order->items as $item) {
-                $message .= "- {$item->name} | Rp " . number_format($item->price, 0, ',', '.') . "\n";
+                $message .= "- {$item->name} * {$item->quantity} | Rp " . number_format($item->price, 0, ',', '.') . "\n";
             }
-            $message .= "\n*Total:* Rp " . number_format($totalPrice, 0, ',', '.') . "\n\n";
+
+            $message .= "\n*Total:* Rp " . number_format($total, 0, ',', '.') . "\n\n";
             $message .= "We are sorry for the inconvenience. Please contact us if you have any questions.\n";
             $message .= "Thank you for your understanding. 🌸";
     
@@ -226,8 +226,10 @@ class DashboardCheckoutController extends Controller
             $message .= "Hello, {$order->first_name} {$order->last_name}. Your order has been cancelled, and we have initiated a refund for your purchase.\n\n";
             $message .= "*Order Details:*\n";
             foreach ($order->items as $item) {
-                $message .= "- {$item->name} | Rp " . number_format($item->price, 0, ',', '.') . "\n";
+                $message .= "- {$item->name} * {$item->quantity} | Rp " . number_format($item->item_total, 0, ',', '.') . "\n";
             }
+
+            $message .= "\n*Total:* Rp " . number_format($total, 0, ',', '.') . "\n\n";
             $message .= "You should receive your refund shortly.\n";
             $message .= "Thank you for your patience and understanding. 🌸";
         }
