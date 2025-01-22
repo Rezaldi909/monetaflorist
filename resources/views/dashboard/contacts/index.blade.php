@@ -31,7 +31,7 @@
           <td>{{ $contact->phone }}</td>
           <td>{{ $contact->message }}</td>
           <td>
-            <a href="{{ route('contacts.edit', $contact->id) }}" class="badge bg-warning"><span data-feather="edit"></span></a>
+            {{-- <a href="{{ route('contacts.edit', $contact->id) }}" class="badge bg-warning"><span data-feather="edit"></span></a> --}}
             <form action="/dashboard/contacts/{{ $contact->id }}" method="post" class="d-inline">
               @method('delete')
               @csrf

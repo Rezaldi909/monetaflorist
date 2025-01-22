@@ -72,26 +72,36 @@ class DashboardAccountController extends Controller
      * @param  \App\Models\User  $user
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, User $user)
+    public function update(Request $request, $id)
     {
-        $rules = [
-            'username' => 'required|string|max:255',
-            'email' => 'required|string|email|max:255|unique:users,email,' . $user->id,
-            'password' => 'nullable|string|min:8|confirmed',
-        ];
+        $user = User::findOrFail($id);
     
-        $validatedData = $request->validate($rules);
+        // Validasi password lama dan data lainnya
+        $validatedData = $request->validate([
+            'current_password' => 'required',
+            'username' => 'required|max:255|unique:users,username,' . $user->id,
+            'email' => 'required|email|unique:users,email,' . $user->id,
+            'password' => 'nullable|confirmed|min:8', // Optional password
+        ]);
     
-        // Jika password diberikan, hash sebelum update
-        if ($request->password) {
-            $validatedData['password'] = Hash::make($request->password);
+        // Verifikasi password lama
+        if (!Hash::check($request->current_password, $user->password)) {
+            return redirect()->back()->withErrors(['current_password' => 'The current password is incorrect.']);
         }
     
-        $user->update($validatedData);
+        // Update user data
+        $user->username = $validatedData['username'];
+        $user->email = $validatedData['email'];
     
-        return redirect()->route('account.edit')->with('success', 'Account updated successfully!');
+        // Update password jika disertakan
+        if ($request->filled('password')) {
+            $user->password = Hash::make($request->password);
+        }
+    
+        $user->save();
+    
+        return redirect('/dashboard')->with('success', 'Your account has been updated successfully.');
     }
-    
     
     
 

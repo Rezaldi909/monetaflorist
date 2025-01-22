@@ -9,6 +9,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Mail;
+use Twilio\Rest\Client;
 
 class CheckoutController extends Controller
 {
@@ -55,6 +56,7 @@ class CheckoutController extends Controller
                 
             }
             
+            
 
             // Hapus cart dari session setelah order ditempatkan
             Session::forget('cart');
@@ -62,10 +64,11 @@ class CheckoutController extends Controller
             $checkoutItems = $cart;
 
             // Kirim email ke pelanggan
-            Mail::to($validatedData['email'])->send(new OrderPlaced($checkout, $checkoutItems));
+            // Mail::to($validatedData['email'])->send(new OrderPlaced($checkout, $checkoutItems));
 
             // // Kirim ke admin (jika diperlukan)
             // Mail::to('admin@example.com')->send(new OrderPlaced($checkout, $checkoutItems));
+            $this->sendWhatsAppMessage($checkout, $checkoutItems);
 
             // Commit transaksi
             DB::commit();
@@ -80,4 +83,63 @@ class CheckoutController extends Controller
             return redirect()->back()->with('error', 'An error occurred while processing your order. Please try again.');
         }
     }
+
+    private function sendWhatsAppMessage($checkout, $checkoutItems)
+    {
+        $twilioSid = env('TWILIO_SID');
+        $twilioAuthToken = env('TWILIO_AUTH_TOKEN');
+        $twilioWhatsAppNumber = env('TWILIO_WHATSAPP_NUMBER');
+    
+        $client = new Client($twilioSid, $twilioAuthToken);
+    
+        // Hitung total harga pesanan
+        $totalPrice = 0;
+        foreach ($checkoutItems as $item) {
+            // Convert price to float and add it to totalPrice
+            $totalPrice += floatval(str_replace('.', '', $item['price']));
+        }
+    
+        // Format pesan WhatsApp
+        $message = "🌸 *Order Confirmation* 🌸\n\n";
+        $message .= "*Customer Details:*\n";
+        $message .= "Name: {$checkout->first_name} {$checkout->last_name}\n";
+        $message .= "Address: {$checkout->address}\n";
+        $message .= "Phone: {$checkout->phone}\n\n";
+    
+        $message .= "*Order Details:*\n";
+        foreach ($checkoutItems as $item) {
+            $message .= "- {$item['name']} | Rp " . number_format(floatval(str_replace('.', '', $item['price'])), 0, ',', '.') . "\n";
+        }
+    
+        // Format total price
+        $message .= "\n*Total:* Rp " . number_format($totalPrice, 0, ',', '.') . "\n\n";
+    
+        // Update message to request payment proof
+        $message .= "Please send us your payment proof so we can process your order.\n";
+        $message .= "Bank Transfer Details:\n";
+        $message .= "- Bank: BCA\n";  // Replace with actual bank name
+        $message .= "- Account Number: 91283719237\n";  // Replace with actual account number
+        $message .= "- Account Name: MonetaFlorist\n";  // Replace with actual account name
+    
+        $message .= "\nThank you for your order! 💐\n";
+        $message .= "We look forward to receiving your payment proof. 🌟";
+    
+        // Modify the phone number to replace the leading 0 with +62 for Twilio
+        $phone = $checkout->phone;
+        if (substr($phone, 0, 1) == '0') {
+            // Remove the leading zero and replace it with +62
+            $phone = '+62' . substr($phone, 1);
+        }
+    
+        // Send the WhatsApp message
+        $client->messages->create(
+            "whatsapp:{$phone}", // Send to the modified phone number
+            [
+                'from' => $twilioWhatsAppNumber,
+                'body' => $message,
+            ]
+        );
+    }
+    
+
 }

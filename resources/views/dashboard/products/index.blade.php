@@ -12,8 +12,27 @@
 @endif
 
 <div class="table-responsive col-lg-11">
-    <a href="/dashboard/products/create" class="btn btn-primary mb-3">Create new product</a>
-    <a href="/dashboard/products/pdf" class="btn btn-secondary mb-3">Download PDF</a>
+    <div class="table-responsive col-lg-11">
+      <div class="d-flex justify-content-between align-items-center mb-3">
+        <div>
+          <a href="/dashboard/products/create" class="btn btn-primary">Create new product</a>
+          <a href="/dashboard/products/pdf" class="btn btn-secondary">Download PDF</a>
+       </div>
+          <form action="{{ route('products.index') }}" method="GET" class="d-flex">
+              <!-- Search Input -->
+              <input 
+                  type="text" 
+                  name="search" 
+                  class="form-control me-2" 
+                  placeholder="Search products..." 
+                  value="{{ request('search') }}"
+                  style="width: 250px;"
+                  id="searchInput"
+              >
+          </form>
+          
+      </div>
+  
     <table class="table table-striped table-sm">
 
       <thead>
@@ -31,7 +50,7 @@
       <tbody>
         @foreach ( $products as $product )
         <tr>
-          <td>{{ $loop->iteration }}</td>
+          <td>{{ $products->perPage() * ($products->currentPage() - 1) + $loop->iteration }}</td> 
           <td>
             <div>
               <img style="height: 80px; width: 80px" src="{{ asset('storage/' . $product->image) }}" alt="" class="img-fluid mb-3">
@@ -55,5 +74,20 @@
         @endforeach
       </tbody>
     </table>
+    <!-- Pagination Links -->
+    <div class="d-flex justify-content-end">
+       {{ $products->appends(['search' => request('search')])->links() }}
+    </div>
 </div>
+@endsection
+
+@section('scripts')
+<script>
+    // Prevent form submission with Enter key
+    document.getElementById('searchInput').addEventListener('keydown', function(event) {
+        if (event.key === 'Enter') {
+            event.preventDefault(); // Prevent the Enter key from submitting the form
+        }
+    });
+</script>
 @endsection

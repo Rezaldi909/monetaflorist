@@ -1,7 +1,14 @@
 @extends('layouts.main')
 
+
 @section('container')
     <div class="container-fluid my-5">
+
+        @if (@session()->has('success'))
+        <div class="alert alert-primary col-lg-12" role="alert">
+        {{ session('success') }}  
+        </div>  
+        @endif
         <h2 class="text-center mb-5 text-new">PLACE ORDER</h2>
         <div class="row mt-5">
             <!-- Shipping Details Section -->

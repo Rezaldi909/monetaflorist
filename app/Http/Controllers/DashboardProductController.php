@@ -19,12 +19,24 @@ class DashboardProductController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
-        return view('dashboard.products.index',[
-            'products' => Product::where('users_id', auth()->user()->id)->get()
-        ]); 
+        $search = $request->input('search'); // Get search query
+    
+        $products = Product::where('users_id', auth()->user()->id)
+            ->when($search, function ($query, $search) {
+                $query->where('nama', 'like', "%{$search}%"); // Search filter
+            })
+            ->paginate(10); // Add pagination (10 items per page)
+    
+        return view('dashboard.products.index', [
+            'products' => $products,
+            'search' => $search, // Pass the search value back to the view
+        ]);
     }
+    
+    
+    
 
     /**
      * Show the form for creating a new resource.

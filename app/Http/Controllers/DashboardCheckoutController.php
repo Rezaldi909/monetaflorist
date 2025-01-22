@@ -16,12 +16,32 @@ class DashboardCheckoutController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
-        return view('dashboard.checkouts.index',[
-            'orders' => Checkout::all()
-        ]); 
+        $status = $request->get('status'); // Get status filter
+        $search = $request->get('search'); // Get search query
+    
+        // Reset to all if no filters are applied
+        $orders = Checkout::when($status, function ($query) use ($status) {
+            return $query->where('status', $status); // Filter by status
+        })->when($search, function ($query) use ($search) {
+            return $query->where(function ($q) use ($search) {
+                $q->where('email', 'like', "%$search%")
+                  ->orWhere('first_name', 'like', "%$search%")
+                  ->orWhere('last_name', 'like', "%$search%")
+                  ->orWhere('address', 'like', "%$search%")
+                  ->orWhere('phone', 'like', "%$search%")
+                  ->orWhere('status', 'like', "%$search%");
+            });
+        })->paginate(10); // Adjust pagination as needed
+
+        return view('dashboard.checkouts.index', [
+            'orders' => $orders,
+        ]);
     }
+    
+    
+    
 
     /**
      * Show the form for creating a new resource.
@@ -128,9 +148,11 @@ class DashboardCheckoutController extends Controller
 
     public function generatePdf()
     {
-        // Ambil semua data order dan items terkait
-        $orders = Checkout::with('items')->get();
-    
+        // Ambil semua data order yang statusnya 'Completed' dan items terkait
+        $orders = Checkout::with('items')
+            ->where('status', 'Completed') // Menambahkan filter untuk status 'Completed'
+            ->get();
+        
         // Hitung total harga untuk setiap order
         $orders->map(function ($order) {
             $order->totalPrice = $order->items->sum('price'); // Menggunakan relasi items
@@ -141,8 +163,9 @@ class DashboardCheckoutController extends Controller
         $pdf = Pdf::loadView('dashboard.checkouts.pdf', compact('orders'))->setPaper('a4', 'landscape');
     
         // Kembalikan file PDF untuk diunduh
-        return $pdf->stream('orders-report.pdf');
+        return $pdf->stream('orders-report-completed.pdf');
     }
+    
     
     
 

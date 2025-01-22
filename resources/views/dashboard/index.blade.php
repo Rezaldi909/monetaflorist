@@ -5,6 +5,12 @@
     <h1 class="h2">Dashboard</h1>
 </div>
 
+@if (@session()->has('success'))
+<div class="alert alert-primary col-lg-12" role="alert">
+  {{ session('success') }}  
+</div>  
+@endif
+
 <div class="row">
     <div class="col-md-4">
         <div class="card text-white bg-primary mb-3">

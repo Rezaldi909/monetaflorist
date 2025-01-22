@@ -32,7 +32,7 @@
           <td>{{ $custom->phone }}</td>
           <td>{{ $custom->message }}</td>
           <td>
-        <a href="/dashboard/custom-order/{{$custom->id}}/edit" class="badge bg-warning"><span data-feather="edit"></span></a>
+        {{-- <a href="/dashboard/custom-order/{{$custom->id}}/edit" class="badge bg-warning"><span data-feather="edit"></span></a> --}}
             <form action="/dashboard/custom-order/{{ $custom->id }}" method="post" class="d-inline">
               @method('delete')
               @csrf
